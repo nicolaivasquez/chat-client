@@ -15,13 +15,13 @@ function App() {
 
   const receiveMessage = useCallback((message) => {
     setMessages(orig => [...orig, message]);
-  }, [messages])
+  }, [])
 
   useEffect(() => {
     Pusher.logToConsole = true;
 
     const pusher = new Pusher(config.APP_KEY, {
-      authEndpoint: 'http://localhost:9000/pusher/auth',
+      authEndpoint: `${baseUrl}/pusher/auth`,
       cluster: 'eu',
       encrypted: true,
     });
@@ -32,12 +32,12 @@ function App() {
         receiveMessage(JSON.stringify(data))
       });
     }
-  }, []);
+  }, [receiveMessage]);
 
   useEffect(() => {
     if (channel.current) {
       setInterval(() => {
-        axios.post('http://localhost:9000/pusher/send', {
+        axios.post(`${baseUrl}/pusher/send`, {
           channel: config.APP_CHANNEL,
           message: `Hello, ${Math.random()}`
         })
