@@ -4,5 +4,5 @@
   "APP_SECRET": "0c822285871143d8c2b6",
   "APP_CLUSTER": "eu",
   "APP_CHANNEL": "my-channel",
-  "API_URL": "https://compassionate-heyrovsky-1ec90b.netlify.app/"
+  "API_URL": "https://compassionate-heyrovsky-1ec90b.netlify.app"
 }
