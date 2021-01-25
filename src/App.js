@@ -1,18 +1,27 @@
 import React, {useEffect, useRef, useState, useCallback} from 'react'
 import Pusher from 'pusher-js'
-import axios from "axios";
 
 import './App.css';
 import config from './config.json'
+import {Header} from './Header';
+import {ChatList} from "./ChatList";
+import styled from "styled-components";
+import {ChatWindow} from "./ChatWindow";
 
 const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:9000' : config.API_URL
+
+const MainWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  height: 100%;
+`
 
 function App() {
 
   const channel = useRef(null);
 
   const [messages, setMessages] = useState([]);
-  const [text, setText] = useState('')
 
   const receiveMessage = useCallback((message) => {
     setMessages(orig => [...orig, message]);
@@ -35,39 +44,14 @@ function App() {
     }
   }, [receiveMessage]);
 
-  const handleKeydown = useCallback((e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-
-      axios.post(`${baseUrl}/pusher/send`, {
-        channel: config.APP_CHANNEL,
-        message: text
-      })
-      setText("");
-    }
-  }, [text]);
-
-  const handleChange = useCallback((e) => {
-    setText(e.target.value)
-  }, [])
-
   return (
     <div className="App">
-      <div data-testid='messages'>
-        {
-          messages.map((message) => (
-              <div key={message.id} data-testid='message'>
-                {
-                  message.message
-                }
-              </div>
-          ))
-        }
-      </div>
+      <Header />
+      <MainWrapper>
+        <ChatList />
+        <ChatWindow messages={messages} />
+      </MainWrapper>
 
-      <div>
-        <textarea onKeyDown={handleKeydown} value={text} onChange={handleChange} />
-      </div>
     </div>
   );
 }
