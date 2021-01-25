@@ -11,7 +11,8 @@ function App() {
 
   const channel = useRef(null);
 
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState([]);
+  const [text, setText] = useState('')
 
   const receiveMessage = useCallback((message) => {
     setMessages(orig => [...orig, message]);
@@ -29,33 +30,44 @@ function App() {
     if (channel.current === null) {
       channel.current = pusher.subscribe(config.APP_CHANNEL);
       channel.current.bind('message', function(data) {
-        receiveMessage(JSON.stringify(data))
+        receiveMessage(data)
       });
     }
   }, [receiveMessage]);
 
-  useEffect(() => {
-    if (channel.current) {
-      setInterval(() => {
-        axios.post(`${baseUrl}/pusher/send`, {
-          channel: config.APP_CHANNEL,
-          message: `Hello, ${Math.random()}`
-        })
-      }, 5000)
+  const handleKeydown = useCallback((e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+
+      axios.post(`${baseUrl}/pusher/send`, {
+        channel: config.APP_CHANNEL,
+        message: text
+      })
+      setText("");
     }
-  }, [channel]);
+  }, [text]);
+
+  const handleChange = useCallback((e) => {
+    setText(e.target.value)
+  }, [])
 
   return (
     <div className="App">
-      {
-        messages.map((message, index) => (
-            <div key={index}>
-              {
-                message
-              }
-            </div>
-        ))
-      }
+      <div data-testid='messages'>
+        {
+          messages.map((message) => (
+              <div key={message.id} data-testid='message'>
+                {
+                  message.message
+                }
+              </div>
+          ))
+        }
+      </div>
+
+      <div>
+        <textarea onKeyDown={handleKeydown} value={text} onChange={handleChange} />
+      </div>
     </div>
   );
 }
