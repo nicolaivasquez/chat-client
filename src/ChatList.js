@@ -6,7 +6,7 @@ import {
 export const ChatList = () => {
     return (
         <Sidebar>
-            Test
+            &nbsp;
         </Sidebar>
     );
 }

@@ -8,7 +8,7 @@ import {
 
 export const ChatMessages = ({messages}) => {
   return (
-    <ChatMessagesWrapper>
+    <ChatMessagesWrapper data-testid='chat-messages'>
       {messages.length > 0 && <ChatMessagesStartDate first={messages[0]} />}
       {messages.map((message) => (
           <ChatMessage message={message} key={message.id} />

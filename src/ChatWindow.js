@@ -5,11 +5,8 @@ import {
   ChatSend,
   WindowWrapper,
 } from "./components/ChatWindow";
-import config from './config.json'
-import axios from "axios";
 import {ChatMessages} from "./ChatMessages";
-
-const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:9000' : config.API_URL
+import {sendMessage} from "./api";
 
 export const ChatWindow = ({
     messages,
@@ -20,20 +17,14 @@ export const ChatWindow = ({
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         setInputText("");
-        axios.post(`${baseUrl}/pusher/send`, {
-          channel: config.APP_CHANNEL,
-          message: inputText
-        })
+        sendMessage({message: inputText})
       }
     },
     [inputText]
   );
   const handleSend = React.useCallback(() => {
     setInputText("");
-    axios.post(`${baseUrl}/pusher/send`, {
-      channel: config.APP_CHANNEL,
-      message: inputText
-    })
+    sendMessage({message: inputText})
   }, [ inputText]);
   const handleChange = (e) => {
     setInputText(e.target.value);
@@ -50,8 +41,9 @@ export const ChatWindow = ({
             onChange={handleChange}
             value={inputText}
             rows={1}
+            data-testid='chat-new-message'
         />
-        <ChatSend disabled={inputText.length === 0} onClick={handleSend}>
+        <ChatSend disabled={inputText.length === 0} onClick={handleSend} data-testid='chat-send-message'>
           Send
         </ChatSend>
       </ChatInputWrapper>
